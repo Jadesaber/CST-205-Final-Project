@@ -1,0 +1,77 @@
+# --------------------------------------------------------------------------------------------------
+# Title: drawImage
+# Author: Jenny Hallett
+# Class: CST 205
+# Abstract: This program creates a blank picture and then draws an image on the picture using
+#   a combination of lines, rectangles, ovals, and arcs.
+# --------------------------------------------------------------------------------------------------
+
+h = 500
+w = 900
+pic = makeEmptyPicture(w, h)
+show(pic)
+
+#colors chosen from rgb color chart found at: http://www.tayloredmktg.com/rgb/
+
+#GROUND
+color = makeColor(0, 100, 0) #Dark Green
+addLine(pic, 0, 425, (w - 1), 425, color) #ground level dividing line
+#fills in color of the ground
+for x in range (0, w):
+  for y in range (426, h):
+    pixel = getPixel(pic, x, y)
+    pixel = setColor(pixel, color)
+repaint(pic)
+
+
+#HOUSE
+#walls
+color = makeColor(240, 230, 140) #Khaki
+addRectFilled(pic, 45, 200, 465, 225, color)
+color = makeColor(0, 0, 0) #Black
+addRect(pic, 45, 200, 465, 225, color)
+
+#door
+color = makeColor(244, 164, 96) #Sandy Brown
+addRectFilled(pic, 200, 300, 100, 125, color)
+color = makeColor(0, 0, 0) #Black
+addRect(pic, 200, 300, 100, 125, color)
+
+#door knob
+color = makeColor(178, 34, 34) #Firebrick
+addOvalFilled(pic, 270, 350, 20, 20, color)
+color = makeColor(0, 0, 0) #Black
+addOval(pic, 270, 350, 20, 20, color)
+
+#left window
+color = makeColor(255, 255, 255) #White
+addRectFilled(pic, 75, 315, 100, 65, color)
+color = makeColor(0, 0, 0) #Black
+addRect(pic, 75, 315, 100, 65, color) #border
+addLine(pic, 125, 316, 125, 379, color) #interior vertical line
+addLine(pic, 76, 349, 174, 349, color) #interior horizontal line
+
+#right window
+color = makeColor(255, 255, 255) #White
+addRectFilled(pic, 325, 315, 150, 65, color)
+color = makeColor(0, 0, 0) #Black
+addRect(pic, 325, 315, 150, 65, color) #border
+addLine(pic, 400, 316, 400, 379, color) #interior vertical line
+addLine(pic, 326, 349, 474, 349, color) #interior horizontal line
+
+#roof
+addLine(pic, 277, 75, 45, 199, color)
+addLine(pic, 278, 75, 510, 199, color)
+new_color = makeColor(139, 69, 19) #Saddle Brown
+for x in range (45, w):
+  for y in range (76, 199):
+    pixel = getPixel(pic, x, y)
+    orig_color = getColor(pixel)
+    if (orig_color == black):
+      x += 1
+      p = getPixel(pic, x, y)
+      orig_color = getColor(pixel)
+      
+    elif (orig_color != black):
+        p = setColor(p, new_color)
+explore(pic)
