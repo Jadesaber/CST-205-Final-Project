@@ -1,0 +1,312 @@
+# -----------------------------------------------------------------------------------------------
+# Title: imageManip
+# Author: Jenny Hallett
+# Class: CST 205
+# Date: 4/28/14
+# Abstract: This program manipulates a specific image using individual filters.
+#   1) Color Change (looks for and changes specific color values)
+#   2) Black & White (changes image from color to black and white/grayscale)
+#   3) Y-axis Mirror (mirrors the image over the y-axis)
+#   4) X-axis Mirror (mirrors the image over the x-axis)
+#   5) Border (adds a border around the image)
+#   6) Negative (alters the image to a negative of itself by reversing color values)
+#   7) Rotation (rotates the image 90 degrees to the left)
+#   8) Color Swap (swaps the color values - red->blue, green->red, blue->green)
+# The program uses a combination of filters on the image to create two new images.
+#   1) Combined Color Manip Filters
+#      a) Color Change (to top left corner of image)
+#      b) Negative (to top right corner of image)
+#      c) Color Swap (to bottom left corner of image)
+#      d) Black & White (to bottom right corner of image)
+#      e)Border (adds border around entire image)
+#   2) Combined Mirror & Rotation Filters
+#      a) Rotation (rotates image 90 degrees to the left)
+#      b) Y-axis Mirror (mirrors the image over the y-axis)
+#      c) X-axis Mirror (mirrors the image over the x-axis)
+# -----------------------------------------------------------------------------------------------
+
+file = pickAFile()
+pic = makePicture(file)
+w = getWidth(pic)
+h = getHeight(pic)
+
+show(pic)
+
+#Color Change Filter
+#looks for and changes specific color values
+image_1 = duplicatePicture(pic)
+
+for x in range (0, w):
+  for y in range (0, h):
+    pixel = getPixel(image_1, x, y)
+    r = getRed(pixel)
+    g = getGreen(pixel)
+    b = getBlue(pixel)
+    
+    if (r > 247 and g > 210 and b > 175):
+      color = makeColor(60, 179, 113)
+      pixel = setColor(pixel, color)
+    elif (r > 170 and g > 135 and b > 105):
+      color = makeColor(46, 139, 87)
+      pixel = setColor(pixel, color)
+    elif (r > 160 and g > 100 and b > 80):
+      color = makeColor(34, 139, 34)
+      pixel = setColor(pixel, color)
+
+repaint(image_1)
+
+#Black & White Filter
+#makes a color image black and white
+image_2 = duplicatePicture(pic)
+
+for x in range (0, w):
+  for y in range (0, h):
+    pixel = getPixel(image_2, x, y)
+    r = getRed(pixel) * 0.2126
+    g = getGreen(pixel) * 0.7152
+    b = getBlue(pixel) * 0.0722
+    #luminance formula from http://en.wikipedia.org/wiki/Grayscale
+    #luminance = 0.2126R + 0.7152G + 0.0722B
+    
+    luminance = r + g + b
+    color = makeColor(luminance, luminance, luminance)
+    pixel = setColor(pixel, color)
+    
+repaint(image_2)
+
+#Y-axis Mirror Filter
+#mirrored over y-axis
+image_3 = makeEmptyPicture(w, h)
+
+for x in range (0, w/2):
+  for y in range (0, h):
+    pixel = getPixel(pic, x, y)
+    color = getColor(pixel)
+    blankPixel = setColor(getPixel(image_3, x, y), color)
+    mirroredPixel = setColor(getPixel(image_3, (w-x-1), y), color)
+
+show(image_3)
+
+#X-axis Mirror Filter
+#mirrored over x-axis
+image_4 = makeEmptyPicture(w, h)
+
+for x in range (0, w):
+  for y in range (0, h/2):
+    pixel = getPixel(pic, x, y)
+    color = getColor(pixel)
+    blankPixel = setColor(getPixel(image_4, x, y), color)
+    mirroredPixel = setColor(getPixel(image_4, x, (h-y-1)), color)
+
+show(image_4)
+
+#Border Filter
+#adds colored border around an image
+image_5 = makeEmptyPicture(w+120, h+120)
+image_5 = copyInto(pic, image_5, 60, 60)
+show(image_5)
+
+color = makeColor(0, 0, 255)
+for x in range (0, 60):
+  for y in range (0, h+120):
+    pixel = setColor(getPixel(image_5, x, y), color)
+
+for x in range (0, w+120):
+  for y in range (0, 60):
+    pixel = setColor(getPixel(image_5, x, y), color)
+
+for x in range (860, w+120):
+  for y in range(0, h+120):
+    pixel = setColor(getPixel(image_5, x, y), color)
+
+for x in range (0, w+120):
+  for y in range (678, h+120):
+    pixel = setColor(getPixel(image_5, x, y), color)
+
+repaint(image_5)
+
+#Negative Filter
+#changes all color values to the opposite color value on the color wheel
+image_6 = duplicatePicture(pic)
+
+for x in range (0, w):
+  for y in range (0, h):
+    pixel = getPixel(image_6, x, y)
+    r = getRed(pixel)
+    g = getGreen(pixel)
+    b = getBlue(pixel)
+  
+    negative = makeColor(255 - r, 255 - g, 255 - b)
+    pixel = setColor(pixel, negative)
+
+show(image_6)
+
+#Rotation Filter
+#rotates image 90 degrees to the left
+image_7 = makeEmptyPicture(h, w)
+
+tar_x = 0
+for x in range (0, w):
+  tar_y = 0
+  for y in range (0, h):
+    source = getPixel(pic, x, y)
+    color = getColor(source)
+    target = setColor(getPixel(image_7, tar_y, (w - tar_x - 1)), color)
+    tar_y += 1
+  tar_x += 1
+
+show(image_7)
+
+#Color Swap Filter
+#swaps red, green, and blue values with each other
+image_8 = duplicatePicture(pic)
+
+for x in range (0, w):
+  for y in range (0, h):
+    pixel = getPixel(image_8, x, y)
+    r = getRed(pixel)
+    g = getGreen(pixel)
+    b = getBlue(pixel)
+    
+    color = makeColor(b, r, g)
+    pixel = setColor(pixel, color)
+    
+show(image_8)
+
+#Combine Color Manip Filters
+#applies Color Change, Negative, Color Swap, and Negative filters
+# to four quadrants of the image, then adds a colored border around
+# entire image
+image_9 = makeEmptyPicture(w+120, h+120)
+image_9 = copyInto(pic, image_9, 60, 60)
+show(image_9)
+
+#top left corner
+#Color Change Filter
+for x in range (60, 460):
+  for y in range (60, 369):
+    pixel = getPixel(image_9, x, y)
+    r = getRed(pixel)
+    g = getGreen(pixel)
+    b = getBlue(pixel)
+  
+    if (r > 247 and g > 210 and b > 175):
+      color = makeColor(60, 179, 113)
+      pixel = setColor(pixel, color)
+    elif (r > 170 and g > 135 and b > 105):
+      color = makeColor(46, 139, 87)
+      pixel = setColor(pixel, color)
+    elif (r > 160 and g > 100 and b > 80):
+      color = makeColor(34, 139, 34)
+      pixel = setColor(pixel, color)
+
+repaint(image_9)
+
+#top right corner
+#Negative Filter
+for x in range (460, 860):
+  for y in range (60, 369):
+    pixel = getPixel(image_9, x, y)
+    r = getRed(pixel)
+    g = getGreen(pixel)
+    b = getBlue(pixel)
+  
+    negative = makeColor(255 - r, 255 - g, 255 - b)
+    pixel = setColor(pixel, negative)
+    
+repaint(image_9)
+
+#bottom left corner
+#Color Swap Filter
+for x in range (60, 460):
+  for y in range (369, 678):
+    pixel = getPixel(image_9, x, y)
+    r = getRed(pixel)
+    g = getGreen(pixel)
+    b = getBlue(pixel)
+    
+    color = makeColor(b, r, g)
+    pixel = setColor(pixel, color)
+
+repaint(image_9)
+
+#bottom right corner
+#Black & White Filter
+for x in range (460, 860):
+  for y in range (369, 678):
+    pixel = getPixel(image_9, x, y)
+    r = getRed(pixel) * 0.2126
+    g = getGreen(pixel) * 0.7152
+    b = getBlue(pixel) * 0.0722
+   
+    luminance = r + g + b
+    color = makeColor(luminance, luminance, luminance)
+    pixel = setColor(pixel, color)
+    
+repaint(image_9)
+
+#border
+color = makeColor(0, 206, 209)
+for x in range (0, 60):
+  for y in range (0, h+120):
+    #right side
+    pixel = setColor(getPixel(image_9, x, y), color)
+
+for x in range (0, w+120):
+  for y in range (0, 60):
+    #top
+    pixel = setColor(getPixel(image_9, x, y), color)
+
+for x in range (860, w+120):
+  for y in range(0, h+120):
+    #left side
+    pixel = setColor(getPixel(image_9, x, y), color)
+
+for x in range (0, w+120):
+  for y in range (678, h+120):
+    #bottom
+    pixel = setColor(getPixel(image_9, x, y), color)
+
+repaint(image_9)
+
+#Combine Mirror & Rotation Filters
+#rotates image 90 degrees to the left then applies the
+# y-axis then x-axis mirror filters
+image_10 = makeEmptyPicture(h, w)
+
+#Rotation Filter
+tar_x = 0
+for x in range (0, w):
+  tar_y = 0
+  for y in range (0, h):
+    source = getPixel(pic, x, y)
+    color = getColor(source)
+    target = setColor(getPixel(image_10, tar_y, (w - tar_x - 1)), color)
+    tar_y += 1
+  tar_x += 1
+
+show(image_10)
+
+#Y-Axis Mirror
+image_11 = duplicatePicture(image_10)
+w = getWidth(image_10)
+h = getHeight(image_10)
+
+for x in range (0, w/2):
+  for y in range (0, h):
+    pixel = getPixel(image_11, x, y)
+    color = getColor(pixel)
+    mirroredPixel = setColor(getPixel(image_10, (w-x-1), y), color)
+    
+repaint(image_10)
+
+#X-Axis Mirror
+image_11 = duplicatePicture(image_10)
+
+for x in range (0, w):
+  for y in range (0, h/2):
+    pixel = getPixel(image_11, x, y)
+    color = getColor(pixel)
+    mirroredPixel = setColor(getPixel(image_10, x, (h-y-1)), color)
+
+repaint(image_10)
